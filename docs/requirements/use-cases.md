@@ -939,6 +939,9 @@ The course admin shall be able to cancel the use case at any time prior to submi
 - **4d. Previously submitted records were deleted:**
   - 4d1. The system assesses remaining records under BR-submission-reminder-status; past submission alone does not suppress reminders.
   - 4d2. Continue at step 5.
+- **4e. A student with missing work is deactivated:**
+  - 4e1. The system keeps her visible with "Account deactivated" and disables reminders for her missing items (BR-student-lifecycle, BR-submission-reminder-eligibility).
+  - 4e2. Continue at step 5.
 - **5a. No required submissions are missing:**
   - 5a1. The system displays that result and offers no send action.
   - 5a2. The instructor may select another week at step 3 or end the use case.
@@ -956,7 +959,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
 
 **Priority:** High
 **Frequency of Use:** On demand, typically around weekly submission due days.
-**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-scoped-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-evaluation-editable-until-close, BR-submission-reminder-target-week, BR-submission-reminder-status, BR-submission-reminder-eligibility, BR-submission-reminder-rate-limit, BR-submission-reminder-access
+**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-scoped-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-evaluation-editable-until-close, BR-student-lifecycle, BR-submission-reminder-target-week, BR-submission-reminder-status, BR-submission-reminder-eligibility, BR-submission-reminder-rate-limit, BR-submission-reminder-access
 
 **Associated Information:**
 
