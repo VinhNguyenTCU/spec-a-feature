@@ -887,6 +887,108 @@ The course admin shall be able to cancel the use case at any time prior to submi
 **Assumptions:**
 **Open Issues:**
 
+### **UC-SEC-remind-non-submitters: The instructor reviews missing weekly submissions and sends reminders**
+
+**UC ID and Name:** UC-SEC-remind-non-submitters: Review missing weekly submissions and send reminders
+**Created By:**
+**Date Created:** 02/Oct/2026
+**Primary Actor:** instructor
+**Secondary Actors:** Gmail SMTP email service
+**Trigger:** The instructor indicates to review missing submissions for a course section and week.
+**Description:** The instructor wants to identify missing weekly activity reports and peer evaluations in her course section and optionally remind students who can still submit them.
+
+**Preconditions:**
+- PRE-1. The instructor is logged into the system.
+- PRE-2. The instructor is authorized for the selected course section (BR-section-scoped-access, BR-role-based-access).
+
+**Postconditions:**
+- POST-1. The instructor has viewed submission status for the selected section and target week.
+- POST-2. If reminders were requested, the system displays sent, skipped, failed, and delivery-uncertain outcomes and records successful sends and uncertain-delivery holds for BR-submission-reminder-rate-limit.
+- POST-3. Submission records are unchanged.
+
+**Main Success Scenario:**
+1. The instructor indicates to review missing weekly submissions.
+2. The system asks her to select an authorized course section and a target week, identified by its Monday date.
+3. The instructor selects the section and target week.
+4. The system determines each enrolled student's status separately for reports and evaluations under BR-submission-reminder-status and BR-submission-reminder-eligibility.
+5. The system displays students with missing work, their separate artifact statuses, and reminder restrictions according to the Associated Information.
+6. The instructor selects eligible students and missing artifact types, then requests reminders.
+7. The system displays the intended recipients, target week, and selected items for confirmation.
+8. The instructor confirms sending. Confirmation starts the batch; it can no longer be cancelled by the instructor.
+9. Immediately before each send, the system rechecks authorization, current submission status, eligibility, and the shared rate limit, removing selected items that no longer qualify.
+10. For each student with remaining eligible items, the system sends one individual email containing those items through the Gmail SMTP integration and records the successful send under BR-submission-reminder-rate-limit.
+11. The system displays sent, skipped, failed, and delivery-uncertain outcomes, including the reason for each skipped, failed, or uncertain item and the next permitted reminder time for any uncertain-delivery hold.
+12. Use case ends.
+
+**Extensions:**
+- **1a. The requester is unauthorized, or authorization is lost before viewing or sending:**
+  - 1a1. The system refuses the operation under BR-submission-reminder-access and BR-section-scoped-access, discloses no further student records, and sends no further reminders.
+  - 1a2. Use case ends.
+- **3a. The target week is invalid:**
+  - 3a1. The system identifies the invalid value and asks for a week identified by its Monday date.
+  - 3a2. Return to step 3.
+- **4a. The target week is inactive:**
+  - 4a1. The system displays both artifact types as "Not required" and offers no reminder action (BR-submission-reminder-eligibility, BR-active-weeks).
+  - 4a2. The instructor may select another week at step 3 or end the use case.
+- **4b. A student with missing work has no team:**
+  - 4b1. The system keeps her visible with "No team assigned" and disables reminders for her missing items (BR-team-assignment-required, BR-submission-reminder-eligibility).
+  - 4b2. Continue at step 5.
+- **4c. A missing evaluation is outside its submission window:**
+  - 4c1. The system displays "Window closed" or "Window not open," as applicable, and disables its reminder action (BR-evaluation-submission-window, BR-submission-reminder-eligibility).
+  - 4c2. Assess the report independently and continue at step 5.
+- **4d. Previously submitted records were deleted:**
+  - 4d1. The system assesses remaining records under BR-submission-reminder-status; past submission alone does not suppress reminders.
+  - 4d2. Continue at step 5.
+- **4e. A student with missing work is deactivated:**
+  - 4e1. The system keeps her visible with "Account deactivated" and disables reminders for her missing items (BR-student-lifecycle, BR-submission-reminder-eligibility).
+  - 4e2. Continue at step 5.
+- **4f. Team membership or the rubric changes while the evaluation window is open:**
+  - 4f1. The system reassesses evaluation completeness under BR-submission-reminder-status and displays the resulting status. Any newly missing coverage remains subject to reminder eligibility and the existing rate limit.
+  - 4f2. Continue at step 5; changes after display are handled by the recheck at step 9.
+- **4h. Team membership or the rubric changes after the evaluation window closes:**
+  - 4h1. The system assesses historical evaluation completeness using the closing roster and rubric under BR-submission-reminder-status. Later roster or rubric changes do not change the required historical coverage, and reminders remain disabled under BR-evaluation-submission-window.
+  - 4h2. Continue at step 5.
+- **4g. The selected report week is in the future:**
+  - 4g1. For an active target week, the system shows the report's reminder restriction as "Future week" and disables its reminder action (BR-submission-reminder-eligibility). Inactive weeks retain the "Not required" treatment in extension 4a.
+  - 4g2. The instructor may select another week at step 3 or continue reviewing without sending reminders for the future week.
+- **5a. No required submissions are missing:**
+  - 5a1. The system displays that result and offers no send action.
+  - 5a2. The instructor may select another week at step 3 or end the use case.
+- **5b. An item is rate-limited:**
+  - 5b1. The system displays its next permitted reminder time and disables its selection (BR-submission-reminder-rate-limit).
+  - 5b2. Continue at step 6 for other eligible items, if any.
+- **6a. The instructor only reviews the list or cancels before confirming:**
+  - 6a1. No reminders are sent. Use case ends.
+- **8a. The instructor leaves the page or attempts to cancel after confirming:**
+  - 8a1. The system continues the confirmed batch, including the checks at step 9 and outcome handling at step 11. Leaving the page does not cancel sending, and emails already sent cannot be recalled.
+- **9a. A selected item is now submitted, ineligible, or rate-limited:**
+  - 9a1. The system skips it under the applicable reminder business rule and records the reason for the outcome display.
+  - 9a2. Continue at step 10 with any remaining eligible selected items for that student; if none remain, proceed to the next student.
+- **10a. The mail service definitively rejects a send:**
+  - 10a1. The system logs the failure and marks the included items as failed, without recording a successful send (BR-submission-reminder-rate-limit).
+  - 10a2. Continue with remaining recipients and include the failure in step 11. A later request may retry after rechecking eligibility.
+- **10b. The system cannot determine whether the mail service accepted a send:**
+  - 10b1. The system logs the uncertain outcome, marks every included item "Delivery uncertain," and records the hold under BR-submission-reminder-rate-limit.
+  - 10b2. Continue with remaining recipients and include the uncertain outcome and next permitted reminder time in step 11. The uncertain attempt is not automatically retried.
+
+**Priority:** High
+**Frequency of Use:** On demand, typically around weekly submission due days.
+**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-scoped-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-evaluation-editable-until-close, BR-student-lifecycle, BR-submission-reminder-target-week, BR-submission-reminder-status, BR-submission-reminder-eligibility, BR-submission-reminder-rate-limit, BR-submission-reminder-access
+
+**Associated Information:**
+
+Details:
+- The target week is the week the work describes, not the week the email is sent. Assess both artifact types against the selected target week independently.
+- Each student row identifies the student and shows separate report and evaluation statuses. Missing items show reminder eligibility, restriction reasons, and the next permitted reminder time when rate-limited. Distinguish submitted work from missing work that cannot receive a reminder.
+- Keep students with missing work visible even when none of their items can receive reminders. The instructor can finish after reviewing the list.
+- The confirmation view explains that confirming starts the batch, that cancellation is available only before confirmation, and that emails already sent cannot be recalled.
+- An email identifies the course section, target week, and only the selected items still eligible at send time, with their configured due information. Do not imply that an older report is due in the current week or that a due day is a submission cutoff.
+- Delivery follows CI-email-notifications. Submission status is a student educational record covered by CO-ferpa; access and recipient isolation follow BR-submission-reminder-access. Lists and emails contain no evaluation scores, comments, or report contents.
+- Scheduled dispatch is a separate time-triggered behavior associated with FR-NOT-weekly-reminder. It selects its target week under BR-submission-reminder-target-week and applies the same status, eligibility, rate-limit, and individual-recipient rules. When both artifacts are due that day, include only the student's eligible missing items; send no email if none remain. This feature narrows the existing requirement's unconditional "each student" recipient selection.
+
+**Assumptions:**
+**Open Issues:**
+
 ## **Team**
 
 ### **UC-TEA-find-teams: The course admin/instructor finds teams**
