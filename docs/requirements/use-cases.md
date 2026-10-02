@@ -942,6 +942,9 @@ The course admin shall be able to cancel the use case at any time prior to submi
 - **4e. A student with missing work is deactivated:**
   - 4e1. The system keeps her visible with "Account deactivated" and disables reminders for her missing items (BR-student-lifecycle, BR-submission-reminder-eligibility).
   - 4e2. Continue at step 5.
+- **4f. Team membership or the rubric changes while the evaluation window is open:**
+  - 4f1. The system reassesses evaluation completeness under BR-submission-reminder-status and displays the resulting status. Any newly missing coverage remains subject to reminder eligibility and the existing rate limit.
+  - 4f2. Continue at step 5; changes after display are handled by the recheck at step 9.
 - **5a. No required submissions are missing:**
   - 5a1. The system displays that result and offers no send action.
   - 5a2. The instructor may select another week at step 3 or end the use case.
