@@ -914,7 +914,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
 5. The system displays students with missing work, their separate artifact statuses, and reminder restrictions according to the Associated Information.
 6. The instructor selects eligible students and missing artifact types, then requests reminders.
 7. The system displays the intended recipients, target week, and selected items for confirmation.
-8. The instructor confirms sending.
+8. The instructor confirms sending. Confirmation starts the batch; it can no longer be cancelled by the instructor.
 9. Immediately before each send, the system rechecks authorization, current submission status, eligibility, and the shared rate limit, removing selected items that no longer qualify.
 10. For each student with remaining eligible items, the system sends one individual email containing those items through the Gmail SMTP integration and records the successful send under BR-submission-reminder-rate-limit.
 11. The system displays sent, skipped, failed, and delivery-uncertain outcomes, including the reason for each skipped, failed, or uncertain item and the next permitted reminder time for any uncertain-delivery hold.
@@ -956,6 +956,8 @@ The course admin shall be able to cancel the use case at any time prior to submi
   - 5b2. Continue at step 6 for other eligible items, if any.
 - **6a. The instructor only reviews the list or cancels before confirming:**
   - 6a1. No reminders are sent. Use case ends.
+- **8a. The instructor leaves the page or attempts to cancel after confirming:**
+  - 8a1. The system continues the confirmed batch, including the checks at step 9 and outcome handling at step 11. Leaving the page does not cancel sending, and emails already sent cannot be recalled.
 - **9a. A selected item is now submitted, ineligible, or rate-limited:**
   - 9a1. The system skips it under the applicable reminder business rule and records the reason for the outcome display.
   - 9a2. Continue at step 10 with any remaining eligible selected items for that student; if none remain, proceed to the next student.
@@ -976,6 +978,7 @@ Details:
 - The target week is the week the work describes, not the week the email is sent. Assess both artifact types against the selected target week independently.
 - Each student row identifies the student and shows separate report and evaluation statuses. Missing items show reminder eligibility, restriction reasons, and the next permitted reminder time when rate-limited. Distinguish submitted work from missing work that cannot receive a reminder.
 - Keep students with missing work visible even when none of their items can receive reminders. The instructor can finish after reviewing the list.
+- The confirmation view explains that confirming starts the batch, that cancellation is available only before confirmation, and that emails already sent cannot be recalled.
 - An email identifies the course section, target week, and only the selected items still eligible at send time, with their configured due information. Do not imply that an older report is due in the current week or that a due day is a submission cutoff.
 - Delivery follows CI-email-notifications. Submission status is a student educational record covered by CO-ferpa; access and recipient isolation follow BR-submission-reminder-access. Lists and emails contain no evaluation scores, comments, or report contents.
 - Scheduled dispatch is a separate time-triggered behavior associated with FR-NOT-weekly-reminder. It selects its target week under BR-submission-reminder-target-week and applies the same status, eligibility, rate-limit, and individual-recipient rules. When both artifacts are due that day, include only the student's eligible missing items; send no email if none remain. This feature narrows the existing requirement's unconditional "each student" recipient selection.
