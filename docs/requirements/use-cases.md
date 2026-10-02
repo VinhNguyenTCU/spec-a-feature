@@ -903,7 +903,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
 
 **Postconditions:**
 - POST-1. The instructor has viewed submission status for the selected section and target week.
-- POST-2. If reminders were requested, the system displays sent, skipped, and failed outcomes and records successful sends for BR-submission-reminder-rate-limit.
+- POST-2. If reminders were requested, the system displays sent, skipped, failed, and delivery-uncertain outcomes and records successful sends and uncertain-delivery holds for BR-submission-reminder-rate-limit.
 - POST-3. Submission records are unchanged.
 
 **Main Success Scenario:**
@@ -917,7 +917,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
 8. The instructor confirms sending.
 9. Immediately before each send, the system rechecks authorization, current submission status, eligibility, and the shared rate limit, removing selected items that no longer qualify.
 10. For each student with remaining eligible items, the system sends one individual email containing those items through the Gmail SMTP integration and records the successful send under BR-submission-reminder-rate-limit.
-11. The system displays sent, skipped, and failed outcomes, including the reason for each skipped or failed item.
+11. The system displays sent, skipped, failed, and delivery-uncertain outcomes, including the reason for each skipped, failed, or uncertain item and the next permitted reminder time for any uncertain-delivery hold.
 12. Use case ends.
 
 **Extensions:**
@@ -959,9 +959,12 @@ The course admin shall be able to cancel the use case at any time prior to submi
 - **9a. A selected item is now submitted, ineligible, or rate-limited:**
   - 9a1. The system skips it under the applicable reminder business rule and records the reason for the outcome display.
   - 9a2. Continue at step 10 with any remaining eligible selected items for that student; if none remain, proceed to the next student.
-- **10a. The mail service rejects a send:**
+- **10a. The mail service definitively rejects a send:**
   - 10a1. The system logs the failure and marks the included items as failed, without recording a successful send (BR-submission-reminder-rate-limit).
   - 10a2. Continue with remaining recipients and include the failure in step 11. A later request may retry after rechecking eligibility.
+- **10b. The system cannot determine whether the mail service accepted a send:**
+  - 10b1. The system logs the uncertain outcome, marks every included item "Delivery uncertain," and records the hold under BR-submission-reminder-rate-limit.
+  - 10b2. Continue with remaining recipients and include the uncertain outcome and next permitted reminder time in step 11. The uncertain attempt is not automatically retried.
 
 **Priority:** High
 **Frequency of Use:** On demand, typically around weekly submission due days.
