@@ -945,6 +945,9 @@ The course admin shall be able to cancel the use case at any time prior to submi
 - **4f. Team membership or the rubric changes while the evaluation window is open:**
   - 4f1. The system reassesses evaluation completeness under BR-submission-reminder-status and displays the resulting status. Any newly missing coverage remains subject to reminder eligibility and the existing rate limit.
   - 4f2. Continue at step 5; changes after display are handled by the recheck at step 9.
+- **4g. The selected report week is in the future:**
+  - 4g1. For an active target week, the system shows the report's reminder restriction as "Future week" and disables its reminder action (BR-submission-reminder-eligibility). Inactive weeks retain the "Not required" treatment in extension 4a.
+  - 4g2. The instructor may select another week at step 3 or continue reviewing without sending reminders for the future week.
 - **5a. No required submissions are missing:**
   - 5a1. The system displays that result and offers no send action.
   - 5a2. The instructor may select another week at step 3 or end the use case.
