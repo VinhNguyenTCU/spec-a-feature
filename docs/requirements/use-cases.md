@@ -956,7 +956,7 @@ The course admin shall be able to cancel the use case at any time prior to submi
 
 **Priority:** High
 **Frequency of Use:** On demand, typically around weekly submission due days.
-**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-scoped-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-evaluation-editable-until-close, BR-submission-reminder-status, BR-submission-reminder-eligibility, BR-submission-reminder-rate-limit, BR-submission-reminder-access
+**Business Rules:** BR-section-scoped-access, BR-role-based-access, BR-team-scoped-access, BR-team-assignment-required, BR-active-weeks, BR-evaluation-submission-window, BR-evaluation-editable-until-close, BR-submission-reminder-target-week, BR-submission-reminder-status, BR-submission-reminder-eligibility, BR-submission-reminder-rate-limit, BR-submission-reminder-access
 
 **Associated Information:**
 
@@ -966,7 +966,7 @@ Details:
 - Keep students with missing work visible even when none of their items can receive reminders. The instructor can finish after reviewing the list.
 - An email identifies the course section, target week, and only the selected items still eligible at send time, with their configured due information. Do not imply that an older report is due in the current week or that a due day is a submission cutoff.
 - Delivery follows CI-email-notifications. Submission status is a student educational record covered by CO-ferpa; access and recipient isolation follow BR-submission-reminder-access. Lists and emails contain no evaluation scores, comments, or report contents.
-- Scheduled dispatch is a separate time-triggered behavior associated with FR-NOT-weekly-reminder. It applies the same status, eligibility, rate-limit, and individual-recipient rules. When both artifacts are due that day, include only the student's eligible missing items; send no email if none remain. This feature narrows the existing requirement's unconditional "each student" recipient selection.
+- Scheduled dispatch is a separate time-triggered behavior associated with FR-NOT-weekly-reminder. It selects its target week under BR-submission-reminder-target-week and applies the same status, eligibility, rate-limit, and individual-recipient rules. When both artifacts are due that day, include only the student's eligible missing items; send no email if none remain. This feature narrows the existing requirement's unconditional "each student" recipient selection.
 
 **Assumptions:**
 **Open Issues:**
